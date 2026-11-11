@@ -1,5 +1,7 @@
 # PREL PTP time provider
 
+> **Code signing is pending.** `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs are not code-signed yet; free signing by SignPath Foundation has been applied for (see [Code signing policy](#code-signing-policy)). Until then, Windows SmartScreen warns when you run the setup program (choose **More info**, then **Run anyway**), and many security products will block the setup program or the unsigned time provider, which runs inside the Windows Time service. These include antivirus and endpoint protection software, Smart App Control, and application control policies such as App Control for Business (WDAC) and AppLocker.
+
 A PTP (IEEE 1588) time provider for the Windows Time service. It keeps a Windows PC's clock synchronised to a PTP grandmaster on the local network, to within a few microseconds when the network adapter supports hardware timestamps.
 
 It comes as two programs:
@@ -7,7 +9,7 @@ It comes as two programs:
 - **PrelPtp.dll**, the time provider. The Windows Time service (w32time) loads it, and it gives w32time measurements of the clock's offset from the PTP master. w32time steers the clock.
 - **PrelPtpSetup.exe**, which installs, configures and uninstalls it. It can also configure Microsoft's own PTP client (ptpprov.dll), which is part of Windows but is not well documented.
 
-Contents: [Requirements](#requirements) · [Installing](#installing) · [The setup dialog](#the-setup-dialog) · [Hardware timestamps](#hardware-timestamps) · [Checking that it works](#checking-that-it-works) · [Uninstalling](#uninstalling) · [Registry settings](#registry-settings) · [Building from source](#building-from-source) · [License](#license)
+Contents: [Requirements](#requirements) · [Installing](#installing) · [The setup dialog](#the-setup-dialog) · [Hardware timestamps](#hardware-timestamps) · [Checking that it works](#checking-that-it-works) · [Uninstalling](#uninstalling) · [Registry settings](#registry-settings) · [Building from source](#building-from-source) · [Code signing policy](#code-signing-policy) · [License](#license)
 
 ## Requirements
 
@@ -215,6 +217,17 @@ ptp-driver.exe [<path\to\PrelPtp.dll>] [seconds] [netchange-second]
 The DLL defaults to PrelPtp.dll in the same folder, the run to 30 s, and the network change to half way (0 for none). The provider reads its configuration from the registry as usual, so run the setup program first. It can run while w32time is running PrelPtp, but not while Microsoft's PTP client is running, because that holds the PTP ports.
 
 Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattributes`). The `.rc` files say so to the resource compiler with `#pragma code_page(65001)`; if Visual Studio's resource editor ever saves one as UTF-16, convert it back. Release builds use the static C/C++ runtime (`/MT`), so the programs need no Visual C++ Redistributable. The version is set in `PrelPtpVersion.h`.
+
+## Code signing policy
+
+Releases are to be signed with free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). The application is pending; until it is approved, releases are unsigned.
+
+- Only files built from this repository by its [GitHub Actions workflow](.github/workflows/build.yml) are signed: `PrelPtp.dll`, and `PrelPtpSetup.exe`, which contains it.
+- Every signing request is approved by hand.
+- Committers and reviewers: [production-robots](https://github.com/production-robots)
+- Approvers: [production-robots](https://github.com/production-robots)
+
+**Privacy:** this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. The time provider exchanges PTP messages, as PTP requires, only on the network adapter chosen in the setup program, and the setup program listens for PTP traffic to show which adapters receive it. Neither sends anything to any other system.
 
 ## License
 

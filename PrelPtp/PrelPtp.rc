@@ -37,7 +37,7 @@ BEGIN
             VALUE "InternalName", "PrelPtp"
             VALUE "LegalCopyright", "(c) 2019 Production Robots Engineering Ltd"
             VALUE "OriginalFilename", ORIGINAL_FILENAME
-            VALUE "ProductName", "Prel Ptp Time Provider"
+            VALUE "ProductName", "PrelPtp"
         END
     END
     BLOCK "VarFileInfo"

@@ -38,7 +38,7 @@ jobs:
           name: test-results-${{ matrix.configuration }}
           path: TestResults
 
-      # Code signing goes here, once a signing service is chosen (SignPath Foundation or OSSign).
+      # Code signing goes here, once SignPath Foundation approves the project (README: Code signing policy).
       # PrelPtp.dll must be signed before PrelPtpSetup.exe is built, because the setup program
       # embeds it; then PrelPtpSetup.exe is signed.
 
@@ -62,3 +62,58 @@ jobs:
             x64/Release/ptp-driver.exe
             x64/Release/PrelPtp.pdb
             x64/Release/PrelPtpSetup.pdb
+
+  # A tag v<version> (for example v2.0.0) makes a draft GitHub Release from the Release build, to be
+  # checked and published by hand: Releases > the draft > Edit > Publish release.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      # the tag must match the version built into the programs, and the release notes must have
+      # a section for it, which becomes the release's description
+      - name: Check the version and get its release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          built=$(sed -n 's/^#define PRODUCT_VER_STR *"\(.*\)".*/\1/p' PrelPtpVersion.h | tr -d '\r')
+          if [ "$built" != "$version.0" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match the version in PrelPtpVersion.h ($built)"
+            exit 1
+          fi
+          tr -d '\r' < RELEASE_NOTES.md | awk -v v="$version" '/^## /{ p = ($2 == v); next } p' > notes.md
+          if ! grep -q '[^[:space:]]' notes.md; then
+            echo "::error::RELEASE_NOTES.md has no '## $version' section"
+            exit 1
+          fi
+          {
+            echo
+            echo '---'
+            echo
+            echo "Download \`PrelPtpSetup.exe\` and run it; see the [README](https://github.com/$GITHUB_REPOSITORY#installing)."
+            echo "\`PrelPtp-$version-debug.zip\` has the diagnostic tools and the symbol files for this build."
+            echo
+            echo "These files are not code-signed yet: see the [Code signing policy](https://github.com/$GITHUB_REPOSITORY#code-signing-policy)."
+          } >> notes.md
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: PrelPtpSetup
+          path: release
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: PrelPtp-debug
+          path: debug
+
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd debug && zip -r "../release/PrelPtp-$VERSION-debug.zip" .)
+          gh release create "$GITHUB_REF_NAME" release/* --draft --verify-tag \
+            --title "PrelPtp $VERSION" --notes-file notes.md

@@ -154,7 +154,7 @@ BEGIN
             VALUE "InternalName", "PrelPtp"
             VALUE "LegalCopyright", "(c) 2019 Production Robots Engineering Ltd"
             VALUE "OriginalFilename", "PrelPtpSetup.exe"
-            VALUE "ProductName", "PREL PTP time provider"
+            VALUE "ProductName", "PrelPtp"
         END
     END
     BLOCK "VarFileInfo"
