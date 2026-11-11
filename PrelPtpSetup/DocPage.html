@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+  The page in which the setup program shows its README and release notes in the default browser.
+  At build time MakeDocPages.ps1 puts the title and the markdown, converted to HTML, in place of
+  the two PRELPTP placeholder comments.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><!--PRELPTP:TITLE--></title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --fg: #1f2328; --bg: #ffffff; --muted: #59636e; --border: #d1d9e0; --shade: #f6f8fa; --link: #0969da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #f0f6fc; --bg: #0d1117; --muted: #9198a1; --border: #3d444d; --shade: #151b23; --link: #4493f8; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1, h2, h3, h4 { margin: 24px 0 16px; font-weight: 600; line-height: 1.25; }
+  h1, h2 { padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  p, ul, ol, table, pre, blockquote { margin: 0 0 16px; }
+  li + li { margin-top: .25em; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font: 85% Consolas, "Cascadia Mono", monospace; background: var(--shade); padding: .2em .4em; border-radius: 6px; }
+  pre { background: var(--shade); padding: 16px; border-radius: 6px; overflow: auto; line-height: 1.45; }
+  pre code { background: none; padding: 0; }
+  table { display: block; overflow: auto; border-collapse: collapse; }
+  th, td { border: 1px solid var(--border); padding: 6px 13px; }
+  th { font-weight: 600; }
+  tr:nth-child(2n) { background: var(--shade); }
+  blockquote { color: var(--muted); border-left: .25em solid var(--border); padding: 0 1em; }
+</style>
+</head>
+<body>
+<main>
+<!--PRELPTP:CONTENT-->
+</main>
+</body>
+</html>

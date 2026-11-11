@@ -98,7 +98,6 @@
     <ClInclude Include="Exception.h" />
     <ClInclude Include="PrelPtpVersion.h" />
     <ClInclude Include="PtpClient.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PtpUtil\PtpUtil.vcxproj">

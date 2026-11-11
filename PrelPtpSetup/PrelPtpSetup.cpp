@@ -444,16 +444,22 @@ static bool InstallFiles(HWND Dlg) {
   return true;
 }
 
-static void OnReleaseNotes(HWND Dlg) {
+//shows a built-in document as a page in the default browser, which renders the markdown; or,
+//where there is no browser (Server Core), as plain text in Notepad
+static void ShowDocument(HWND Dlg, Install::Document Doc) {
   wchar_t path[MAX_PATH];
-  if (!Install::WriteReleaseNotes(path) || ((INT_PTR)ShellExecute(Dlg, L"open", path, nullptr, nullptr, SW_SHOWNORMAL) <= 32))
-    ErrorBox(Dlg, L"The release notes could not be opened.");
+  for (bool html : { true, false }) {
+    if (Install::WriteDocument(Doc, html, path) && ((INT_PTR)ShellExecute(Dlg, L"open", path, nullptr, nullptr, SW_SHOWNORMAL) > 32))
+      return;
+  }
+  ErrorBox(Dlg, Doc == Install::Document::Readme ? L"The README could not be opened." : L"The release notes could not be opened.");
 }
 
 void DoUninstall(HWND Dlg) {
   EnableWindows(Dlg,
     { IDC_UNINSTALL,
     IDC_RELEASE_NOTES,
+    IDC_README,
     IDC_PROVIDER_PRELPTP,
     IDC_PROVIDER_MSPTP,
     IDC_PROVIDER_NTP,
@@ -1278,7 +1284,11 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return TRUE;
 
     case IDC_RELEASE_NOTES:
-      OnReleaseNotes(hDlg);
+      ShowDocument(hDlg, Install::Document::ReleaseNotes);
+      return TRUE;
+
+    case IDC_README:
+      ShowDocument(hDlg, Install::Document::Readme);
       return TRUE;
 
     case IDC_BMCA_BUTTON:

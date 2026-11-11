@@ -1,3 +1,4 @@
 # Windows project: text files are checked out with CRLF whatever the local git config.
-# Git detects binary files itself (the icon, the Visio drawing, and PrelPtpSetup.rc, which is UTF-16).
+# Every text file is UTF-8, without a byte order mark except in the Visual Studio project files.
+# Git detects the binary files (the icon and the Visio drawing) itself.
 * text=auto eol=crlf

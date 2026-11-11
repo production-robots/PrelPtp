@@ -71,7 +71,7 @@ PREL PTP stays installed whichever you choose, and its settings are kept, so you
 
 **OK** checks the entries first. Errors (for example no adapter selected, or an invalid address) must be corrected. Warnings (for example no PTP traffic in the chosen domain on that adapter) can be accepted.
 
-**Release notes** shows the changes in this version. **Uninstall** is described below.
+**Release notes** shows the changes in this version, and **README** shows this document. Both open in the default web browser (in Notepad if there is none). **Uninstall** is described below.
 
 ### Microsoft's PTP client
 
@@ -154,7 +154,10 @@ The provider's configuration is in `HKLM\SYSTEM\CurrentControlSet\Services\W32Ti
 
 ## Building from source
 
-You need Visual Studio 2022 or later with the **Desktop development with C++** workload (it includes the Windows SDK). Nothing else is required.
+You need:
+
+- Visual Studio 2022 or later with the **Desktop development with C++** workload (it includes the Windows SDK);
+- PowerShell 7 (`pwsh`; install it with `winget install Microsoft.PowerShell`). The build uses it to turn `README.md` and `RELEASE_NOTES.md` into the web pages that the setup program shows.
 
 From a Developer PowerShell for Visual Studio:
 
@@ -165,7 +168,7 @@ msbuild PrelPtp.sln /m /p:Configuration=Release /p:Platform=x64
 or run `build.ps1` (`-Config Debug` for a debug build). The output is in `x64\Release` (or `x64\Debug`):
 
 - `PrelPtp.dll`: the provider;
-- `PrelPtpSetup.exe`: the setup program, with PrelPtp.dll and `RELEASE_NOTES.md` from the same configuration built in;
+- `PrelPtpSetup.exe`: the setup program, with PrelPtp.dll from the same configuration, the README and the release notes built in;
 - `PtpTests.dll`: the unit tests;
 - `ts-probe.exe` and `ptp-driver.exe`: diagnostic tools (see [Tools](#tools)).
 
@@ -183,7 +186,7 @@ To try a new build, run the built `PrelPtpSetup.exe`; it installs its own PrelPt
 |---|---|
 | `PrelPtp` | The provider DLL: the w32time time-provider interface (`PrelPtp.cpp`) and the client with its sockets and threads (`PtpClient.{h,cpp}`; there is a design note at the top of the header). |
 | `PtpUtil` | Static library shared by all the projects: PTP messages and time conversion (`Ptp`), the BMCA (`Bmca`), message handling (`MessagePath`), the delay request/response exchange (`SyncRequest`), the measurement filter (`Filter`), timestamps (`Timestamp`), configuration and adapters (`Util`), time-provider selection (`TimeProviders`), the setup's PTP monitor (`PtpMonitor`) and validation (`Validation`). |
-| `PrelPtpSetup` | The setup program: the dialog, installation (`Install`) and the firewall rule (`Firewall`). |
+| `PrelPtpSetup` | The setup program: the dialog, installation (`Install`) and the firewall rule (`Firewall`). `MakeDocPages.ps1` turns the README and release notes into the web pages (in `DocPage.html`) that its buttons show. |
 | `PtpTests` | Unit tests (Microsoft C++ Unit Test Framework). |
 | `tools` | Diagnostic tools: `ts-probe` and `ptp-driver`. |
 | `Configuration` | Optional w32time settings. |
@@ -211,7 +214,7 @@ ptp-driver.exe [<path\to\PrelPtp.dll>] [seconds] [netchange-second]
 
 The DLL defaults to PrelPtp.dll in the same folder, the run to 30 s, and the network change to half way (0 for none). The provider reads its configuration from the registry as usual, so run the setup program first. It can run while w32time is running PrelPtp, but not while Microsoft's PTP client is running, because that holds the PTP ports.
 
-Conventions: every file uses CRLF line endings (see `.gitattributes`); `PrelPtpSetup.rc` is UTF-16, so edit it in Visual Studio or another UTF-16-aware editor. The version is set in `PrelPtpVersion.h`.
+Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattributes`). The `.rc` files say so to the resource compiler with `#pragma code_page(65001)`; if Visual Studio's resource editor ever saves one as UTF-16, convert it back. The version is set in `PrelPtpVersion.h`.
 
 ## License
 

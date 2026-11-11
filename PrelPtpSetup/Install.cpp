@@ -462,15 +462,17 @@ void CleanUpTemporaryCopies() {
   FindClose(find);
 }
 
-bool WriteReleaseNotes(wchar_t* Path) {
+bool WriteDocument(Document Doc, bool Html, wchar_t* Path) {
+  const bool readme = Doc == Document::Readme;
+  const int id = Html ? (readme ? IDR_README_PAGE : IDR_RELEASE_NOTES_PAGE) : (readme ? IDR_README : IDR_RELEASE_NOTES);
   const void* bytes;
   DWORD size;
   wchar_t temp_dir[MAX_PATH];
-  if (!GetResource(IDR_RELEASE_NOTES, L"TEXT", bytes, size) || !GetTempPath(ARRAYSIZE(temp_dir), temp_dir))
+  if (!GetResource(id, L"TEXT", bytes, size) || !GetTempPath(ARRAYSIZE(temp_dir), temp_dir))
     return false;
-  if (FAILED(StringCchPrintf(Path, MAX_PATH, L"%sPREL PTP release notes.txt", temp_dir)))
+  if (FAILED(StringCchPrintf(Path, MAX_PATH, L"%sPREL PTP %s.%s", temp_dir, readme ? L"README" : L"release notes", Html ? L"html" : L"txt")))
     return false;
-  //UTF-8 with a byte order mark, so Notepad shows any non-ASCII characters correctly
+  //UTF-8 with a byte order mark, so Notepad shows the non-ASCII characters correctly
   static const uint8_t BOM[] = { 0xEF, 0xBB, 0xBF };
   std::vector<uint8_t> text(BOM, BOM + sizeof(BOM));
   text.insert(text.end(), (const uint8_t*)bytes, (const uint8_t*)bytes + size);

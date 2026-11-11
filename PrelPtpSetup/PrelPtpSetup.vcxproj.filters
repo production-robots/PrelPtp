@@ -48,9 +48,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\marti\Pictures\VS2017\Time\Time_color_16x.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="PrelPtp.ico">
       <Filter>Resource Files</Filter>
     </Image>

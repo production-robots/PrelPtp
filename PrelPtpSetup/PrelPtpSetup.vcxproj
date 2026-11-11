@@ -99,11 +99,13 @@
     <ResourceCompile Include="PrelPtpSetup.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="..\RELEASE_NOTES.md" />
+    <None Include="DocPage.html" />
+    <None Include="MakeDocPages.ps1" />
     <None Include="PrelPtpSetup.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\marti\Pictures\VS2017\Time\Time_color_16x.png" />
     <Image Include="PrelPtp.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +114,20 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- The web pages that the Release notes and README buttons show (PrelPtpSetup.rc2), made from
+       the markdown by MakeDocPages.ps1, which needs PowerShell 7 -->
+  <Target Name="MakeDocPages" BeforeTargets="ResourceCompile"
+          Inputs="..\README.md;..\RELEASE_NOTES.md;DocPage.html;MakeDocPages.ps1"
+          Outputs="$(IntDir)README.html;$(IntDir)RELEASE_NOTES.html">
+    <Exec Command="pwsh -NoProfile -Command exit" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ExitCode" PropertyName="PwshExitCode" />
+    </Exec>
+    <Error Condition="'$(PwshExitCode)' != '0'" Text="Building PrelPtpSetup needs PowerShell 7 (pwsh.exe), to make the README and release notes pages. Install it with: winget install Microsoft.PowerShell" />
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -File MakeDocPages.ps1 -OutDir &quot;$(IntDir).&quot; ..\README.md ..\RELEASE_NOTES.md" />
+    <ItemGroup>
+      <FileWrites Include="$(IntDir)README.html;$(IntDir)RELEASE_NOTES.html" />
+    </ItemGroup>
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

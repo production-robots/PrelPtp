@@ -11,5 +11,15 @@ IDR_PPTP_DLL            BIN                     "..\\x64\\Debug\\PrelPtp.dll"
 IDR_PPTP_DLL            BIN                     "..\\x64\\Release\\PrelPtp.dll"
 #endif
 
-// shown by the Release notes button (Install::WriteReleaseNotes)
+// shown by the Release notes and README buttons (Install::WriteDocument): the web pages that
+// MakeDocPages.ps1 makes from them in the intermediate folder (the MakeDocPages target in
+// PrelPtpSetup.vcxproj), and the markdown itself, for Notepad where there is no browser
+#ifdef _DEBUG
+IDR_RELEASE_NOTES_PAGE  TEXT                    "x64\\Debug\\RELEASE_NOTES.html"
+IDR_README_PAGE         TEXT                    "x64\\Debug\\README.html"
+#else
+IDR_RELEASE_NOTES_PAGE  TEXT                    "x64\\Release\\RELEASE_NOTES.html"
+IDR_README_PAGE         TEXT                    "x64\\Release\\README.html"
+#endif
 IDR_RELEASE_NOTES       TEXT                    "..\\RELEASE_NOTES.md"
+IDR_README              TEXT                    "..\\README.md"

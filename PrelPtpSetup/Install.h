@@ -94,7 +94,10 @@ int FinishUninstall(DWORD ParentPid);
 //reboot, which on a server may be a long way off). Called whenever the setup program starts.
 void CleanUpTemporaryCopies();
 
-//writes the built-in release notes to a temporary .txt file. Path: MAX_PATH characters
-bool WriteReleaseNotes(wchar_t* Path);
+enum class Document { ReleaseNotes, Readme };
+
+//writes a built-in document to a temporary file: the web page made from the markdown at build
+//time when Html, otherwise the markdown itself as a .txt file for Notepad. Path: MAX_PATH characters
+bool WriteDocument(Document Doc, bool Html, wchar_t* Path);
 
 }
