@@ -123,6 +123,8 @@ The provider checks that the timestamps really arrive. If they don't, or if they
 ```powershell
 w32tm /query /source            # should show "Prel PTP Client" (or the Microsoft PTP client's master)
 w32tm /query /status /verbose   # last sync, phase offset
+```
+
 
 Strangely, `w32tm /query /source` requires elevation, `w32tm /query /status /verbose` does not.
 
