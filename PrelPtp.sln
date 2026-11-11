@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12217.157 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PtpUtil", "PtpUtil\PtpUtil.vcxproj", "{3F7BB580-6FB3-4793-82EF-592D97AF0DAF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PrelPtp", "PrelPtp\PrelPtp.vcxproj", "{1514592F-3492-42FD-862F-735B1E310CE7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PrelPtpSetup", "PrelPtpSetup\PrelPtpSetup.vcxproj", "{B17FBA67-246A-4125-9890-9C69C75D7AFB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1514592F-3492-42FD-862F-735B1E310CE7} = {1514592F-3492-42FD-862F-735B1E310CE7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PtpTests", "PtpTests\PtpTests.vcxproj", "{640E6A5F-C546-4B83-9332-59AE0E2C6EA9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PtpDriver", "tools\PtpDriver\PtpDriver.vcxproj", "{101E7595-6CAB-4A16-9B4C-6E173014847A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1514592F-3492-42FD-862F-735B1E310CE7} = {1514592F-3492-42FD-862F-735B1E310CE7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsProbe", "tools\TsProbe\TsProbe.vcxproj", "{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{78946139-5CEE-4D46-BEDC-0BEC42658077}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F7BB580-6FB3-4793-82EF-592D97AF0DAF}.Debug|x64.ActiveCfg = Debug|x64
+		{3F7BB580-6FB3-4793-82EF-592D97AF0DAF}.Debug|x64.Build.0 = Debug|x64
+		{3F7BB580-6FB3-4793-82EF-592D97AF0DAF}.Release|x64.ActiveCfg = Release|x64
+		{3F7BB580-6FB3-4793-82EF-592D97AF0DAF}.Release|x64.Build.0 = Release|x64
+		{1514592F-3492-42FD-862F-735B1E310CE7}.Debug|x64.ActiveCfg = Debug|x64
+		{1514592F-3492-42FD-862F-735B1E310CE7}.Debug|x64.Build.0 = Debug|x64
+		{1514592F-3492-42FD-862F-735B1E310CE7}.Release|x64.ActiveCfg = Release|x64
+		{1514592F-3492-42FD-862F-735B1E310CE7}.Release|x64.Build.0 = Release|x64
+		{B17FBA67-246A-4125-9890-9C69C75D7AFB}.Debug|x64.ActiveCfg = Debug|x64
+		{B17FBA67-246A-4125-9890-9C69C75D7AFB}.Debug|x64.Build.0 = Debug|x64
+		{B17FBA67-246A-4125-9890-9C69C75D7AFB}.Release|x64.ActiveCfg = Release|x64
+		{B17FBA67-246A-4125-9890-9C69C75D7AFB}.Release|x64.Build.0 = Release|x64
+		{640E6A5F-C546-4B83-9332-59AE0E2C6EA9}.Debug|x64.ActiveCfg = Debug|x64
+		{640E6A5F-C546-4B83-9332-59AE0E2C6EA9}.Debug|x64.Build.0 = Debug|x64
+		{640E6A5F-C546-4B83-9332-59AE0E2C6EA9}.Release|x64.ActiveCfg = Release|x64
+		{640E6A5F-C546-4B83-9332-59AE0E2C6EA9}.Release|x64.Build.0 = Release|x64
+		{101E7595-6CAB-4A16-9B4C-6E173014847A}.Debug|x64.ActiveCfg = Debug|x64
+		{101E7595-6CAB-4A16-9B4C-6E173014847A}.Debug|x64.Build.0 = Debug|x64
+		{101E7595-6CAB-4A16-9B4C-6E173014847A}.Release|x64.ActiveCfg = Release|x64
+		{101E7595-6CAB-4A16-9B4C-6E173014847A}.Release|x64.Build.0 = Release|x64
+		{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785}.Debug|x64.ActiveCfg = Debug|x64
+		{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785}.Debug|x64.Build.0 = Debug|x64
+		{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785}.Release|x64.ActiveCfg = Release|x64
+		{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{101E7595-6CAB-4A16-9B4C-6E173014847A} = {78946139-5CEE-4D46-BEDC-0BEC42658077}
+		{5063EDE1-7B2D-4C55-9E6E-FF74DBC90785} = {78946139-5CEE-4D46-BEDC-0BEC42658077}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95182430-329A-4A93-B601-326AE9457AF2}
+	EndGlobalSection
+EndGlobal

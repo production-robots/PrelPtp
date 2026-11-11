@@ -1,0 +1,64 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [ Release, Debug ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # the equivalent of a VS x64 developer prompt for the steps below (msbuild, vstest.console)
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Build
+        run: msbuild PrelPtp.sln /m /p:Configuration=${{ matrix.configuration }} /p:Platform=x64
+
+      - name: Unit tests
+        run: vstest.console x64\${{ matrix.configuration }}\PtpTests.dll /Logger:trx /ResultsDirectory:TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.configuration }}
+          path: TestResults
+
+      # Code signing goes here, once a signing service is chosen (SignPath Foundation or OSSign).
+      # PrelPtp.dll must be signed before PrelPtpSetup.exe is built, because the setup program
+      # embeds it; then PrelPtpSetup.exe is signed.
+
+      # PrelPtpSetup.exe is the whole product: PrelPtp.dll and the release notes are built into it
+      - name: Upload setup program
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrelPtpSetup
+          path: x64/Release/PrelPtpSetup.exe
+
+      # for debugging: the diagnostic tools, and the symbols for a crash dump of w32time or the
+      # setup program from this build
+      - name: Upload debugging files
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrelPtp-debug
+          path: |
+            x64/Release/ts-probe.exe
+            x64/Release/ptp-driver.exe
+            x64/Release/PrelPtp.pdb
+            x64/Release/PrelPtpSetup.pdb

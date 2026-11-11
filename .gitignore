@@ -1,0 +1,37 @@
+# Build output: x64\<config> in the solution folder, and each project's own x64\<config> intermediates
+x64/
+[Dd]ebug/
+[Rr]elease/
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.iobj
+*.ipdb
+*.exp
+*.tlog
+*.log
+*.binlog
+
+# Unit test results (vstest.console /Logger:trx)
+[Tt]est[Rr]esults/
+
+# Visual Studio: per-user settings and caches
+.vs/
+*.user
+*.suo
+*.aps
+*.VC.db
+*.VC.opendb
+ipch/
+
+# VS Code: per-user settings and workspaces
+.vscode/
+*.code-workspace
+
+# Python caches (PrelPtpSetup/IconSource scripts)
+__pycache__/
+
+# Code-signing certificates must never be committed
+*.pfx
+*.p12

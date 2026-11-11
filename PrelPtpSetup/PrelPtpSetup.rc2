@@ -1,0 +1,15 @@
+//
+// PrelPtpSetup.rc2: resources edited by hand, which Visual Studio's resource editor must not
+// rewrite. Included at the end of PrelPtpSetup.rc (TEXTINCLUDE 3).
+//
+
+// PrelPtp.dll from the same configuration, installed by PrelPtpSetup (Install.cpp).
+// PrelPtpSetup depends on PrelPtp in the solution, so the DLL is built first.
+#ifdef _DEBUG
+IDR_PPTP_DLL            BIN                     "..\\x64\\Debug\\PrelPtp.dll"
+#else
+IDR_PPTP_DLL            BIN                     "..\\x64\\Release\\PrelPtp.dll"
+#endif
+
+// shown by the Release notes button (Install::WriteReleaseNotes)
+IDR_RELEASE_NOTES       TEXT                    "..\\RELEASE_NOTES.md"
