@@ -96,8 +96,8 @@ void CleanUpTemporaryCopies();
 
 enum class Document { ReleaseNotes, Readme };
 
-//writes a built-in document to a temporary file: the web page made from the markdown at build
-//time when Html, otherwise the markdown itself as a .txt file for Notepad. Path: MAX_PATH characters
-bool WriteDocument(Document Doc, bool Html, wchar_t* Path);
+//writes a built-in document, a web page made from the markdown at build time, to a temporary
+//.html file. Path: MAX_PATH characters
+bool WriteDocument(Document Doc, wchar_t* Path);
 
 }

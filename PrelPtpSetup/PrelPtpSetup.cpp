@@ -444,15 +444,14 @@ static bool InstallFiles(HWND Dlg) {
   return true;
 }
 
-//shows a built-in document as a page in the default browser, which renders the markdown; or,
-//where there is no browser (Server Core), as plain text in Notepad
+//shows a built-in document in the default browser
 static void ShowDocument(HWND Dlg, Install::Document Doc) {
   wchar_t path[MAX_PATH];
-  for (bool html : { true, false }) {
-    if (Install::WriteDocument(Doc, html, path) && ((INT_PTR)ShellExecute(Dlg, L"open", path, nullptr, nullptr, SW_SHOWNORMAL) > 32))
-      return;
-  }
-  ErrorBox(Dlg, Doc == Install::Document::Readme ? L"The README could not be opened." : L"The release notes could not be opened.");
+  if (Install::WriteDocument(Doc, path) && ((INT_PTR)ShellExecute(Dlg, L"open", path, nullptr, nullptr, SW_SHOWNORMAL) > 32))
+    return;
+  ErrorBox(Dlg, Doc == Install::Document::Readme
+    ? L"The README could not be opened in a web browser. It is at https://github.com/production-robots/PrelPtp"
+    : L"The release notes could not be opened in a web browser. They are at https://github.com/production-robots/PrelPtp/blob/main/RELEASE_NOTES.md");
 }
 
 void DoUninstall(HWND Dlg) {

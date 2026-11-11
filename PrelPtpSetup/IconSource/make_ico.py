@@ -12,6 +12,10 @@ from render import render
 # size -> stroke scale (thicker strokes at small sizes so lines stay >= ~1px)
 SIZES = {16: 1.5, 20: 1.4, 24: 1.4, 32: 1.25, 40: 1.1, 48: 1.0, 64: 1.0, 96: 1.0, 128: 1.0, 256: 1.0}
 
+# sizes from this up are stored as PNG, which Windows accepts at any size (Vista and later);
+# smaller ones as bitmaps, which are hardly bigger at those sizes and which every tool reads
+PNG_FROM = 64
+
 
 def bmp_entry(im):
     """32-bit BGRA DIB plus AND mask, the classic ICO entry format."""
@@ -42,7 +46,7 @@ def main(out):
     entries = []
     for size, scale in SIZES.items():
         im = render(size, scale)
-        entries.append((size, png_entry(im) if size >= 256 else bmp_entry(im)))
+        entries.append((size, png_entry(im) if size >= PNG_FROM else bmp_entry(im)))
     data = struct.pack('<HHH', 0, 1, len(entries))
     offset = 6 + 16 * len(entries)
     for size, blob in entries:

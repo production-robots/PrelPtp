@@ -462,21 +462,16 @@ void CleanUpTemporaryCopies() {
   FindClose(find);
 }
 
-bool WriteDocument(Document Doc, bool Html, wchar_t* Path) {
+bool WriteDocument(Document Doc, wchar_t* Path) {
   const bool readme = Doc == Document::Readme;
-  const int id = Html ? (readme ? IDR_README_PAGE : IDR_RELEASE_NOTES_PAGE) : (readme ? IDR_README : IDR_RELEASE_NOTES);
   const void* bytes;
   DWORD size;
   wchar_t temp_dir[MAX_PATH];
-  if (!GetResource(id, L"TEXT", bytes, size) || !GetTempPath(ARRAYSIZE(temp_dir), temp_dir))
+  if (!GetResource(readme ? IDR_README : IDR_RELEASE_NOTES, L"TEXT", bytes, size) || !GetTempPath(ARRAYSIZE(temp_dir), temp_dir))
     return false;
-  if (FAILED(StringCchPrintf(Path, MAX_PATH, L"%sPREL PTP %s.%s", temp_dir, readme ? L"README" : L"release notes", Html ? L"html" : L"txt")))
+  if (FAILED(StringCchPrintf(Path, MAX_PATH, L"%sPREL PTP %s.html", temp_dir, readme ? L"README" : L"release notes")))
     return false;
-  //UTF-8 with a byte order mark, so Notepad shows the non-ASCII characters correctly
-  static const uint8_t BOM[] = { 0xEF, 0xBB, 0xBF };
-  std::vector<uint8_t> text(BOM, BOM + sizeof(BOM));
-  text.insert(text.end(), (const uint8_t*)bytes, (const uint8_t*)bytes + size);
-  return WriteWholeFile(Path, text.data(), (DWORD)text.size());
+  return WriteWholeFile(Path, bytes, size);
 }
 
 }

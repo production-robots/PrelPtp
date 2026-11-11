@@ -21,8 +21,8 @@ Rebuild `PrelPtpSetup` afterwards to embed the new icon.
 
 | Sizes (px)                     | Format                          |
 |--------------------------------|---------------------------------|
-| 16, 20, 24, 32, 40, 48, 64, 96, 128 | 32-bit BGRA bitmap with AND mask |
-| 256                            | PNG                             |
+| 16, 20, 24, 32, 40, 48         | 32-bit BGRA bitmap with AND mask |
+| 64, 96, 128, 256               | PNG (`PNG_FROM` in `make_ico.py`) |
 
 - The artwork is cropped to its content and centred on a transparent square.
 - Below 48 px the strokes are drawn 1.1–1.5× thicker than in the SVG so lines

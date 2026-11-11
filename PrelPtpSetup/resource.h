@@ -11,8 +11,6 @@
 #define IDB_PNG1                        133
 #define IDR_RELEASE_NOTES               134
 #define IDR_README                      135
-#define IDR_RELEASE_NOTES_PAGE          136
-#define IDR_README_PAGE                 137
 #define IDC_GRANDMASTER                 1002
 #define IDC_GRANDMASTER_LABEL           1003
 #define IDC_LA_LABEL                    1004
@@ -49,7 +47,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           110

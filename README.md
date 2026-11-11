@@ -71,7 +71,7 @@ PREL PTP stays installed whichever you choose, and its settings are kept, so you
 
 **OK** checks the entries first. Errors (for example no adapter selected, or an invalid address) must be corrected. Warnings (for example no PTP traffic in the chosen domain on that adapter) can be accepted.
 
-**Release notes** shows the changes in this version, and **README** shows this document. Both open in the default web browser (in Notepad if there is none). **Uninstall** is described below.
+**Release notes** shows the changes in this version, and **README** shows this document. Both open in the default web browser. **Uninstall** is described below.
 
 ### Microsoft's PTP client
 
