@@ -214,7 +214,7 @@ ptp-driver.exe [<path\to\PrelPtp.dll>] [seconds] [netchange-second]
 
 The DLL defaults to PrelPtp.dll in the same folder, the run to 30 s, and the network change to half way (0 for none). The provider reads its configuration from the registry as usual, so run the setup program first. It can run while w32time is running PrelPtp, but not while Microsoft's PTP client is running, because that holds the PTP ports.
 
-Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattributes`). The `.rc` files say so to the resource compiler with `#pragma code_page(65001)`; if Visual Studio's resource editor ever saves one as UTF-16, convert it back. The version is set in `PrelPtpVersion.h`.
+Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattributes`). The `.rc` files say so to the resource compiler with `#pragma code_page(65001)`; if Visual Studio's resource editor ever saves one as UTF-16, convert it back. Release builds use the static C/C++ runtime (`/MT`), so the programs need no Visual C++ Redistributable. The version is set in `PrelPtpVersion.h`.
 
 ## License
 
