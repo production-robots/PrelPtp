@@ -18,7 +18,7 @@ jobs:
         configuration: [ Release, Debug ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # the equivalent of a VS x64 developer prompt for the steps below (msbuild, vstest.console)
       - uses: ilammy/msvc-dev-cmd@v1
@@ -33,7 +33,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ matrix.configuration }}
           path: TestResults
@@ -42,10 +42,10 @@ jobs:
       # PrelPtp.dll must be signed before PrelPtpSetup.exe is built, because the setup program
       # embeds it; then PrelPtpSetup.exe is signed.
 
-      # PrelPtpSetup.exe is the whole product: PrelPtp.dll and the release notes are built into it
+      # PrelPtpSetup.exe is the whole product: PrelPtp.dll, the README and the release notes are built into it
       - name: Upload setup program
         if: matrix.configuration == 'Release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: PrelPtpSetup
           path: x64/Release/PrelPtpSetup.exe
@@ -54,7 +54,7 @@ jobs:
       # setup program from this build
       - name: Upload debugging files
         if: matrix.configuration == 'Release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: PrelPtp-debug
           path: |
