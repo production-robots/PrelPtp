@@ -1,7 +1,6 @@
 # PREL PTP time provider
 
 > **Not code-signed yet.** `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs have no code signature (see [Code signing policy](#code-signing-policy)). Windows SmartScreen warns when you run the setup program, and many security products will block the setup program or the unsigned time provider, which runs inside the Windows Time service. These include antivirus and endpoint protection software, Smart App Control, and application control policies such as App Control for Business (WDAC) and AppLocker.
-On my Windows 11 workstation, if I temporarily disable "Windows Security / Virus and thread protection / Manage settings / Real-time protection" to run the installer, then re-enable Real-time protection, the provider continues working. I don't know if this will work for you and I am not suggesting that you follow this procedure. I am working on getting the code signed, which is the right solution.
 
 A PTP (IEEE 1588) time provider for the Windows Time service. It keeps a Windows PC's clock synchronised to a PTP grandmaster on the local network, to within a few microseconds when the network adapter supports hardware timestamps.
 
@@ -230,6 +229,13 @@ Releases are not code-signed yet. Until then, where application control (App Con
 
 Smart App Control can't make exceptions for individual programs; it has to be turned off.
 
+**Microsoft Defender.** Registering a time provider is also a way for malware to make itself run inside a Windows service, so Microsoft Defender Antivirus may stop the setup program with the detection `Behavior:Win32/Persistence.Registry.TimeProvider.A` ("This program is dangerous and executes commands from an attacker"), and remove `PrelPtp.dll` and the provider's registry settings. If you are sure your copy of `PrelPtpSetup.exe` came from this repository's [releases](../../releases), you can allow it:
+
+1. Open Windows Security > Virus & threat protection > Protection history, and open the detection.
+2. Choose **Actions** > **Restore** (or **Allow on device**).
+3. Run the setup program again and press **OK**.
+
+Allowing it allows this detection on that PC for any program, not only PrelPtp; you can remove the exception later under Virus & threat protection > Allowed threats. Don't turn off real-time protection to get round it.
 
 **Privacy:** this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. The time provider exchanges PTP messages, as PTP requires, only on the network adapter chosen in the setup program, and the setup program listens for PTP traffic to show which adapters receive it. Neither sends anything to any other system.
 
