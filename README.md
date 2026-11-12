@@ -1,6 +1,7 @@
 # PREL PTP time provider
 
-> **Code signing is pending.** `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs are not code-signed yet; free signing by SignPath Foundation has been applied for (see [Code signing policy](#code-signing-policy)). Until then, Windows SmartScreen warns when you run the setup program (choose **More info**, then **Run anyway**), and many security products will block the setup program or the unsigned time provider, which runs inside the Windows Time service. These include antivirus and endpoint protection software, Smart App Control, and application control policies such as App Control for Business (WDAC) and AppLocker.
+> **Not code-signed yet.** `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs have no code signature (see [Code signing policy](#code-signing-policy)). Windows SmartScreen warns when you run the setup program, and many security products will block the setup program or the unsigned time provider, which runs inside the Windows Time service. These include antivirus and endpoint protection software, Smart App Control, and application control policies such as App Control for Business (WDAC) and AppLocker.
+On my Windows 11 workstation, if I temporarily disable "Windows Security / Virus and thread protection / Manage settings / Real-time protection" to run the installer, then re-enable Real-time protection, the provider continues working. I don't know if this will work for you and I am not suggesting that you follow this procedure. I am working on getting the code signed, which is the right solution.
 
 A PTP (IEEE 1588) time provider for the Windows Time service. It keeps a Windows PC's clock synchronised to a PTP grandmaster on the local network, to within a few microseconds when the network adapter supports hardware timestamps.
 
@@ -222,12 +223,13 @@ Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattribute
 
 ## Code signing policy
 
-Releases are to be signed with free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). The application is pending; until it is approved, releases are unsigned.
+Releases are not code-signed yet. Until then, where application control (App Control for Business/WDAC, AppLocker) or endpoint protection blocks unsigned code, you can:
 
-- Only files built from this repository by its [GitHub Actions workflow](.github/workflows/build.yml) are signed: `PrelPtp.dll`, and `PrelPtpSetup.exe`, which contains it.
-- Every signing request is approved by hand.
-- Committers and reviewers: [production-robots](https://github.com/production-robots)
-- Approvers: [production-robots](https://github.com/production-robots)
+- allow the two files by hash: `PrelPtpSetup.exe`, and the installed `C:\Windows\System32\PrelPtp.dll` (for App Control, a hash rule made with `New-CIPolicyRule -Level Hash`);
+- or [build them from source](#building-from-source) and sign them with your organisation's own code signing certificate. Sign `PrelPtp.dll` before `PrelPtpSetup.exe` is built, because the setup program embeds it and installs that copy.
+
+Smart App Control can't make exceptions for individual programs; it has to be turned off.
+
 
 **Privacy:** this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. The time provider exchanges PTP messages, as PTP requires, only on the network adapter chosen in the setup program, and the setup program listens for PTP traffic to show which adapters receive it. Neither sends anything to any other system.
 

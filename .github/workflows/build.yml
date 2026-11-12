@@ -38,7 +38,7 @@ jobs:
           name: test-results-${{ matrix.configuration }}
           path: TestResults
 
-      # Code signing goes here, once SignPath Foundation approves the project (README: Code signing policy).
+      # Code signing goes here (README: Code signing policy).
       # PrelPtp.dll must be signed before PrelPtpSetup.exe is built, because the setup program
       # embeds it; then PrelPtpSetup.exe is signed.
 
