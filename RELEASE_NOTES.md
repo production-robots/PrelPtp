@@ -2,6 +2,11 @@
 
 A PTP (IEEE 1588) time provider for the Windows Time service.
 
+## 2.0.1
+
+- `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs are code-signed by Production Robots Engineering Ltd (see the README's Code signing policy). The programs are otherwise unchanged.
+- README: what to do if Microsoft Defender stops the installation.
+
 ## 2.0.0
 
 First open-source release.

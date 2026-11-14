@@ -38,10 +38,7 @@ jobs:
           name: test-results-${{ matrix.configuration }}
           path: TestResults
 
-      # Code signing goes here (README: Code signing policy).
-      # PrelPtp.dll must be signed before PrelPtpSetup.exe is built, because the setup program
-      # embeds it; then PrelPtpSetup.exe is signed.
-
+      # These are unsigned; the signed job below makes the signed files for releases.
       # PrelPtpSetup.exe is the whole product: PrelPtp.dll, the README and the release notes are built into it
       - name: Upload setup program
         if: matrix.configuration == 'Release'
@@ -63,11 +60,128 @@ jobs:
             x64/Release/PrelPtp.pdb
             x64/Release/PrelPtpSetup.pdb
 
-  # A tag v<version> (for example v2.0.0) makes a draft GitHub Release from the Release build, to be
+  # The signed Release build, for a tag v<version> or on demand (Actions > Build > Run workflow, on
+  # main). PrelPtp.dll and PrelPtpSetup.exe are signed with Azure Artifact Signing; the certificate
+  # is issued to Production Robots Engineering Ltd. The job runs in the "release" environment, which
+  # only main and v* tags can use, and Azure accepts sign-ins only from that environment of this
+  # repository (README: Code signing policy). The environment's secrets say which Azure app
+  # registration, tenant and subscription to sign in to; they are not passwords.
+  signed:
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Build
+        run: msbuild PrelPtp.sln /m /p:Configuration=Release /p:Platform=x64
+
+      - name: Sign in to Azure
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Sign PrelPtp.dll
+        uses: azure/artifact-signing-action@v2
+        with:
+          endpoint: https://neu.codesigning.azure.net/
+          signing-account-name: prelsigning
+          certificate-profile-name: PrelPtp
+          files: ${{ github.workspace }}\x64\Release\PrelPtp.dll
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: PREL PTP time provider
+          description-url: https://github.com/production-robots/PrelPtp
+          # sign in only with the Azure CLI session from the step above
+          exclude-environment-credential: true
+          exclude-workload-identity-credential: true
+          exclude-managed-identity-credential: true
+          exclude-shared-token-cache-credential: true
+          exclude-visual-studio-credential: true
+          exclude-visual-studio-code-credential: true
+          exclude-azure-cli-credential: false
+          exclude-azure-powershell-credential: true
+          exclude-azure-developer-cli-credential: true
+          exclude-interactive-browser-credential: true
+
+      # The setup program embeds PrelPtp.dll, so it is rebuilt now to take the signed copy. Only
+      # its own project is rebuilt: building the solution again would relink PrelPtp.dll, unsigned.
+      - name: Rebuild the setup program with the signed PrelPtp.dll
+        run: msbuild PrelPtpSetup\PrelPtpSetup.vcxproj /t:Rebuild /p:Configuration=Release /p:Platform=x64 "/p:SolutionDir=$env:GITHUB_WORKSPACE\"
+
+      - name: Check that the setup program contains the signed PrelPtp.dll
+        run: |
+          $sig = Get-AuthenticodeSignature x64\Release\PrelPtp.dll
+          if ($sig.Status -ne 'Valid') { throw "PrelPtp.dll is not validly signed: $($sig.Status) $($sig.StatusMessage)" }
+          $latin1 = [Text.Encoding]::Latin1
+          $dll = $latin1.GetString([IO.File]::ReadAllBytes('x64\Release\PrelPtp.dll'))
+          $exe = $latin1.GetString([IO.File]::ReadAllBytes('x64\Release\PrelPtpSetup.exe'))
+          if ($exe.IndexOf($dll, [StringComparison]::Ordinal) -lt 0) { throw 'PrelPtpSetup.exe does not contain the signed PrelPtp.dll' }
+
+      - name: Sign PrelPtpSetup.exe
+        uses: azure/artifact-signing-action@v2
+        with:
+          endpoint: https://neu.codesigning.azure.net/
+          signing-account-name: prelsigning
+          certificate-profile-name: PrelPtp
+          files: ${{ github.workspace }}\x64\Release\PrelPtpSetup.exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: PREL PTP time provider setup
+          description-url: https://github.com/production-robots/PrelPtp
+          exclude-environment-credential: true
+          exclude-workload-identity-credential: true
+          exclude-managed-identity-credential: true
+          exclude-shared-token-cache-credential: true
+          exclude-visual-studio-credential: true
+          exclude-visual-studio-code-credential: true
+          exclude-azure-cli-credential: false
+          exclude-azure-powershell-credential: true
+          exclude-azure-developer-cli-credential: true
+          exclude-interactive-browser-credential: true
+
+      - name: Check the signatures
+        run: |
+          foreach ($f in 'x64\Release\PrelPtp.dll', 'x64\Release\PrelPtpSetup.exe') {
+            $sig = Get-AuthenticodeSignature $f
+            '{0}: {1}; signer {2}; timestamp {3}' -f $f, $sig.Status, $sig.SignerCertificate.Subject, $sig.TimeStamperCertificate.Subject
+            if ($sig.Status -ne 'Valid' -or -not $sig.TimeStamperCertificate) { throw "$f is not validly signed and timestamped" }
+          }
+
+      - name: Upload signed setup program
+        uses: actions/upload-artifact@v7
+        with:
+          name: PrelPtpSetup-signed
+          path: x64/Release/PrelPtpSetup.exe
+
+      # the symbols for this build: a crash dump of the signed files needs these, not the unsigned build's
+      - name: Upload debugging files
+        uses: actions/upload-artifact@v7
+        with:
+          name: PrelPtp-debug-signed
+          path: |
+            x64/Release/ts-probe.exe
+            x64/Release/ptp-driver.exe
+            x64/Release/PrelPtp.pdb
+            x64/Release/PrelPtpSetup.pdb
+
+  # A tag v<version> (for example v2.0.0) makes a draft GitHub Release from the signed build, to be
   # checked and published by hand: Releases > the draft > Edit > Publish release.
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [ build, signed ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -96,18 +210,18 @@ jobs:
             echo "Download \`PrelPtpSetup.exe\` and run it; see the [README](https://github.com/$GITHUB_REPOSITORY#installing)."
             echo "\`PrelPtp-$version-debug.zip\` has the diagnostic tools and the symbol files for this build."
             echo
-            echo "These files are not code-signed yet: see the [Code signing policy](https://github.com/$GITHUB_REPOSITORY#code-signing-policy)."
+            echo "\`PrelPtpSetup.exe\` and the \`PrelPtp.dll\` it installs are signed by Production Robots Engineering Ltd: see the [Code signing policy](https://github.com/$GITHUB_REPOSITORY#code-signing-policy)."
           } >> notes.md
           echo "VERSION=$version" >> "$GITHUB_ENV"
 
       - uses: actions/download-artifact@v8
         with:
-          name: PrelPtpSetup
+          name: PrelPtpSetup-signed
           path: release
 
       - uses: actions/download-artifact@v8
         with:
-          name: PrelPtp-debug
+          name: PrelPtp-debug-signed
           path: debug
 
       - name: Create the draft release

@@ -1,6 +1,6 @@
 # PREL PTP time provider
 
-> **Not code-signed yet.** `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs have no code signature (see [Code signing policy](#code-signing-policy)). Windows SmartScreen warns when you run the setup program, and many security products will block the setup program or the unsigned time provider, which runs inside the Windows Time service. These include antivirus and endpoint protection software, Smart App Control, and application control policies such as App Control for Business (WDAC) and AppLocker.
+> **Code signing.** From version 2.0.1, `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs are signed by Production Robots Engineering Ltd (see [Code signing policy](#code-signing-policy)). Windows SmartScreen may still warn about the setup program while the signature is new (choose **More info**, then **Run anyway**), and because installing a time provider is also something malware does, Microsoft Defender may stop the installation; the code signing policy says what to do.
 
 A PTP (IEEE 1588) time provider for the Windows Time service. It keeps a Windows PC's clock synchronised to a PTP grandmaster on the local network, to within a few microseconds when the network adapter supports hardware timestamps.
 
@@ -222,12 +222,18 @@ Conventions: every text file is UTF-8 with CRLF line endings (see `.gitattribute
 
 ## Code signing policy
 
-Releases are not code-signed yet. Until then, where application control (App Control for Business/WDAC, AppLocker) or endpoint protection blocks unsigned code, you can:
+Releases from 2.0.1 on are code-signed: `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs carry a signature from Production Robots Engineering Ltd, made with [Azure Artifact Signing](https://learn.microsoft.com/azure/artifact-signing/). To check a file, open its Properties > Digital Signatures, or run `Get-AuthenticodeSignature <file>` in PowerShell.
+
+- Only files built from this repository by its [GitHub Actions workflow](.github/workflows/build.yml) are signed: `PrelPtp.dll`, and `PrelPtpSetup.exe`, which contains it.
+- Signing runs only in the workflow's `release` environment, which only the main branch and version tags can use, and Azure accepts signing requests only from that environment of this repository. No signing key or password is stored on GitHub.
+- Every release is checked and published by hand.
+
+Version 2.0.0 is not signed. Where application control (App Control for Business/WDAC, AppLocker) or endpoint protection blocks it, you can:
 
 - allow the two files by hash: `PrelPtpSetup.exe`, and the installed `C:\Windows\System32\PrelPtp.dll` (for App Control, a hash rule made with `New-CIPolicyRule -Level Hash`);
 - or [build them from source](#building-from-source) and sign them with your organisation's own code signing certificate. Sign `PrelPtp.dll` before `PrelPtpSetup.exe` is built, because the setup program embeds it and installs that copy.
 
-Smart App Control can't make exceptions for individual programs; it has to be turned off.
+Smart App Control can't make exceptions for individual unsigned programs; it has to be turned off.
 
 **Microsoft Defender.** Registering a time provider is also a way for malware to make itself run inside a Windows service, so Microsoft Defender Antivirus may stop the setup program with the detection `Behavior:Win32/Persistence.Registry.TimeProvider.A` ("This program is dangerous and executes commands from an attacker"), and remove `PrelPtp.dll` and the provider's registry settings. If you are sure your copy of `PrelPtpSetup.exe` came from this repository's [releases](../../releases), you can allow it:
 
