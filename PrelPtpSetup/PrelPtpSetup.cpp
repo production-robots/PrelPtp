@@ -1193,6 +1193,7 @@ void DlgSaveConfiguration(HWND Dlg) {
   SConfiguration config;
   ZeroMemory(&config, sizeof(config));
   config.DelayRequestInterval = DEFAULT_DRI;
+  config.FilterLength = context->Installed ? context->InitialConfig.FilterLength : DEFAULT_FILTER_LENGTH;
 
   ETimeProvider provider = SelectedProvider(Dlg);
   int adapter = SelectedAdapter(Dlg);

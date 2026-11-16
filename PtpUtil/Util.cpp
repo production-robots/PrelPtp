@@ -223,10 +223,6 @@ bool SaveConfiguration(const SConfiguration& Config) {
     //legacy value, always 0 and never used: DomainNumber replaces it
     RegDeleteValue(key, L"SubDomain");
 
-    //emergency override, set only by hand in the registry. Older setup programs wrote 1 for
-    //Matrox adapters; saving from the dialog clears it so those installations use delay requests again.
-    RegDeleteValue(key, L"DisableDelayRequest");
-
     RegCloseKey(key);
     return true;
   }
@@ -253,7 +249,7 @@ bool LoadConfiguration(SConfiguration& out_Config) {
 
   RegRead(key, L"AdapterName", out_Config.AdapterName, ARRAYSIZE(out_Config.AdapterName));
 
-  out_Config.FilterLength = 50;
+  out_Config.FilterLength = DEFAULT_FILTER_LENGTH;
   RegRead(key, L"FilterLength", out_Config.FilterLength);
 
   out_Config.DelayRequestInterval = 1200;
@@ -285,7 +281,9 @@ bool LoadDisableDelayRequestSetting() {
     return false;
 
   DWORD disable_dr = 0;
-  RegRead(key, L"DisableDelayRequest", disable_dr);
+  //"DisableDelayRequest", the value's name before 2.0.2, is ignored: setup programs before 2.0
+  //wrote 1 there for Matrox adapters, and those installations should use delay requests
+  RegRead(key, L"NoDelayRequest", disable_dr);
   RegCloseKey(key);
   return disable_dr != 0;
 }

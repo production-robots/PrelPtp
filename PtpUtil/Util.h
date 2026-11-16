@@ -129,6 +129,9 @@ bool GetAdapterList(IpAddressEntry* out_AddressList, DWORD& inout_Count);
 
 //PrelPtp's own settings (TimeProviders\PrelPtpProvider). Whether it is enabled is set with
 //SelectTimeProvider (TimeProviders.h), which also enables or disables the other providers.
+//number of measurements averaged when the registry has no usable "FilterLength" (CFilter::MAX_LENGTH)
+static const DWORD DEFAULT_FILTER_LENGTH = 20;
+
 struct SConfiguration {
   TAdapterName AdapterName;
   DWORD GrandmasterAddress;   //IPv4, network byte order. 0: select the master automatically (BMCA)
@@ -169,7 +172,7 @@ bool SetNtpClientEnabled(bool Enabled);
 
 bool LoadConfiguration(SConfiguration& out_Config);
 
-//Provider-only emergency fallback. A missing registry value means delay requests are enabled.
+//Provider-only emergency fallback: registry value "NoDelayRequest". A missing value means delay requests are enabled.
 bool LoadDisableDelayRequestSetting();
 
 //Registry value TimestampMode (provider key): 0 or absent = Auto (hardware timestamps when the adapter

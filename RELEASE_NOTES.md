@@ -2,6 +2,12 @@
 
 A PTP (IEEE 1588) time provider for the Windows Time service.
 
+
+## 2.0.2
+- Manually overridden FilterLength was not being properly preserved by setup program.
+- Changed name of DisableDelayRequest key to NoDelayRequest.
+
+
 ## 2.0.1
 
 - `PrelPtpSetup.exe` and the `PrelPtp.dll` it installs are code-signed by Production Robots Engineering Ltd (see the README's Code signing policy). The programs are otherwise unchanged.

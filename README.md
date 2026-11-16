@@ -152,7 +152,7 @@ The provider's configuration is in `HKLM\SYSTEM\CurrentControlSet\Services\W32Ti
 | `DelayRequestInterval` | DWORD | Mean interval between delay requests, ms. Default 1200. |
 | `FilterLength` | DWORD | Number of measurements averaged, 1-20. Default 20. |
 | `TimestampMode` | DWORD | 0 or absent: hardware timestamps when available. 1: software timestamps only. Not shown in the dialog. |
-| `DisableDelayRequest` | DWORD | 1: send no delay requests, so the path delay is not measured. An emergency override for special networks; logged as a warning at start-up. Not shown in the dialog, and removed when the dialog saves. |
+| `NoDelayRequest` | DWORD | 1: send no delay requests, so the path delay is not measured. An emergency override for special networks; logged as a warning at start-up. Not shown in the dialog. |
 
 `DllName`, `Enabled` and `InputProvider` are the standard w32time provider values.
 
